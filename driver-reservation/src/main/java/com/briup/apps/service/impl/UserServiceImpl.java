@@ -12,13 +12,19 @@ import com.briup.apps.bean.ArrangeTimeExample;
 import com.briup.apps.bean.Car;
 import com.briup.apps.bean.CarExample;
 import com.briup.apps.bean.Coach_Accept;
+import com.briup.apps.bean.Comment;
+import com.briup.apps.bean.CommentExample;
 import com.briup.apps.bean.User;
 import com.briup.apps.bean.UserExample;
+import com.briup.apps.bean.extend.CarExtend;
 import com.briup.apps.config.CustomerException;
 import com.briup.apps.dao.ArrangeTimeMapper;
 import com.briup.apps.dao.CarMapper;
 import com.briup.apps.dao.Coach_AcceptMapper;
+import com.briup.apps.dao.CommentMapper;
 import com.briup.apps.dao.UserMapper;
+import com.briup.apps.dao.extend.CarExtendMapper;
+import com.briup.apps.dao.extend.Coach_AcceptExtendMapper;
 import com.briup.apps.service.IUserService;
 
 @Service
@@ -31,6 +37,12 @@ public class UserServiceImpl implements IUserService{
 	private ArrangeTimeMapper arrangeMapper;
 	@Resource
 	private CarMapper carMapper;
+	@Resource
+	private CarExtendMapper carExtendMapper;
+	@Resource
+	private CommentMapper commentMapper;
+	@Resource
+	private Coach_AcceptExtendMapper coach_acceptExtendMapper;
 	
 	
 	//注册
@@ -111,6 +123,48 @@ public class UserServiceImpl implements IUserService{
 			arrangeMapper.deleteByPrimaryKey(list.get(0).getId());
 		}
 		
+	}
+	
+	//查看教练信息、车辆信息
+	@Override
+	public CarExtend findMessages(int userId) {
+		User user = userMapper.selectByPrimaryKey(userId);
+		int coachId = user.getCoachId();
+		
+		CarExample example = new CarExample();
+		example.createCriteria().andCoachIdEqualTo(coachId);
+		List<Car> cars = carMapper.selectByExample(example );
+		CarExtend carExtend = carExtendMapper.cascadeById(cars.get(0).getId());
+		return carExtend;
+	}
+	
+	//对教练进行评价
+	@Override
+	public void makeComments(int userId,String comment) {
+		User user = userMapper.selectByPrimaryKey(userId);
+		int coachId = user.getCoachId();
+		 Comment comments = new Comment();
+		 comments.setCoachId(coachId);
+		 comments.setCommentTime(new Date().getTime());
+		 comments.setUserId(userId);
+		 comments.setContent(comment);
+		 commentMapper.insert(comments);
+		
+	}
+	
+	//查看教练评论信息
+	@Override
+	public List<Comment> findComments(int coachId) {
+		CommentExample example = new CommentExample();
+		example.createCriteria().andCoachIdEqualTo(coachId);
+		List<Comment> list = commentMapper.selectByExample(example);
+		return list;
+	}
+
+	@Override
+	public List<Coach_Accept> findAll() {
+		List<Coach_Accept> list = coach_acceptExtendMapper.findAll();
+		return list;
 	}
 
 }

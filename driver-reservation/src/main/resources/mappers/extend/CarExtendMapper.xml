@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.briup.apps.dao.extend.CarExtendMapper">
+	<resultMap id="CarExtendMap" 
+			   type="com.briup.apps.bean.extend.CarExtend"
+			   extends="com.briup.apps.dao.CarMapper.BaseResultMap" >
+		<association property="coachAccept" 
+					column="coach_id" 
+					select="com.briup.apps.dao.Coach_AcceptMapper.selectByPrimaryKey">
+		</association>
+	</resultMap>
+	
+	<select id="cascadeById" parameterType="int" resultMap="CarExtendMap" >
+		SELECT *
+		FROM car
+		WHERE id = #{id,jdbcType=BIGINT}
+	</select>
+
+</mapper>

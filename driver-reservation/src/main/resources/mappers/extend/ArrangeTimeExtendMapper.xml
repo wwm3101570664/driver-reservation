@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.briup.apps.dao.extend.ArrangeTimeExtendMapper">
+	<resultMap id="CoachExtendMap" 
+			   type="com.briup.apps.bean.ArrangeTime">
+	</resultMap>
+	
+	<resultMap id="CoachExtendMap2" 
+			   type="com.briup.apps.bean.extend.ArrangeTimeExtend">
+			   
+			   <association 
+			   			property="coachAccept" 
+			   			column="coach_id" 
+			   			select="com.briup.apps.dao.Coach_AcceptMapper.selectByPrimaryKey">
+			   </association>
+	</resultMap>
+	
+	<select id="findAllArrange" resultMap="CoachExtendMap" parameterType="int">
+		SELECT *
+		FROM arrangetime
+		WHERE coach_id = #{id,jdbcType=BIGINT}
+	</select>
+	
+	<select id="findAll" resultMap="CoachExtendMap2">
+	SELECT *
+	FROM arrangetime
+	</select>
+	
+</mapper>
