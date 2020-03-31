@@ -70,8 +70,14 @@ public class UserServiceImpl implements IUserService{
 	@Override
 	public void selectCoach(int id,int coachId) {
 		User user = userMapper.selectByPrimaryKey(id);
-		Coach_Accept coach_Accept = coach_acceptMapper.selectByPrimaryKey(coachId);
-		user.setCoachId(coach_Accept.getId());
+		if(user.getCoachId()==null) {
+			Coach_Accept coach_Accept = coach_acceptMapper.selectByPrimaryKey(coachId);
+			System.out.println(coach_Accept);
+			user.setCoachId(coach_Accept.getId());
+			userMapper.updateByPrimaryKey(user);
+		}else {
+			throw new CustomerException("您已经有教练不能重复选择!!!");
+		}
 	}
 	
 	//绑定个人信息
@@ -127,9 +133,7 @@ public class UserServiceImpl implements IUserService{
 	
 	//查看教练信息、车辆信息
 	@Override
-	public CarExtend findMessages(int userId) {
-		User user = userMapper.selectByPrimaryKey(userId);
-		int coachId = user.getCoachId();
+	public CarExtend findMessages(int coachId) {
 		
 		CarExample example = new CarExample();
 		example.createCriteria().andCoachIdEqualTo(coachId);
@@ -162,8 +166,8 @@ public class UserServiceImpl implements IUserService{
 	}
 
 	@Override
-	public List<Coach_Accept> findAll() {
-		List<Coach_Accept> list = coach_acceptExtendMapper.findAll();
+	public List<CarExtend> findAll() {
+		List<CarExtend> list = carExtendMapper.cascadeFindAll();
 		return list;
 	}
 

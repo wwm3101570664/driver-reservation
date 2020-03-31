@@ -8,12 +8,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.briup.apps.bean.Coach_Accept;
 import com.briup.apps.bean.Comment;
 import com.briup.apps.bean.extend.CarExtend;
 import com.briup.apps.service.IUserService;
 import com.briup.apps.utils.Message;
 import com.briup.apps.utils.MessageUtil;
+
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping("/users")
@@ -33,6 +36,12 @@ public class UsersController {
 		return MessageUtil.success("绑定信息成功!!!");
 	}
 	
+	@ApiOperation(value = "选择教练")
+	//paramType=form适用于表单提交和post
+	@ApiImplicitParams({
+		@ApiImplicitParam(name="id",value = "用户id",paramType = "query",required = true ,dataType = "int"),
+		@ApiImplicitParam(name="coachId",value = "教练id",paramType = "query",required = true,dataType = "int")
+	})
 	@GetMapping("selectCoach")
 	public Message selectCoach(int id,int coachId) {
 		userService.selectCoach(id,coachId);
@@ -52,8 +61,8 @@ public class UsersController {
 	}
 	
 	@GetMapping("findMessages")
-	public Message findMessages(int userId) {
-		CarExtend carExtend = userService.findMessages(userId);
+	public Message findMessages(int coachId) {
+		CarExtend carExtend = userService.findMessages(coachId);
 		return MessageUtil.success(carExtend);
 	}
 	
@@ -71,8 +80,7 @@ public class UsersController {
 	
 	@GetMapping("findAll")
 	public Message findAll() {
-		List<Coach_Accept> list = userService.findAll();
-		System.out.println(list.get(0).getRoleId());
+		List<CarExtend> list = userService.findAll();
 		return MessageUtil.success(list);
 	}
 	

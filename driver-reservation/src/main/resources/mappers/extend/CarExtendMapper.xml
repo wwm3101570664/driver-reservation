@@ -15,5 +15,10 @@
 		FROM car
 		WHERE id = #{id,jdbcType=BIGINT}
 	</select>
+	
+	<select id="cascadeFindAll" resultMap="CarExtendMap" >
+		SELECT *
+		FROM car
+	</select>
 
 </mapper>

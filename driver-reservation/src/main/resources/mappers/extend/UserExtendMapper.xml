@@ -2,7 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.briup.apps.dao.extend.UserExtendMapper">
 	<resultMap id="UserExtendMap" 
-			   type="com.briup.apps.bean.User">
+			   type="com.briup.apps.bean.User"
+			   extends="com.briup.apps.dao.UserMapper.BaseResultMap">
 	</resultMap>
 	
 	<select id="findAllUsers" resultMap="UserExtendMap" parameterType="int">

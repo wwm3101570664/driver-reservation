@@ -17,12 +17,15 @@ import com.briup.apps.dao.CarMapper;
 import com.briup.apps.dao.CoachMapper;
 import com.briup.apps.dao.Coach_AcceptMapper;
 import com.briup.apps.dao.extend.ArrangeTimeExtendMapper;
+import com.briup.apps.dao.extend.CoachExtendMapper;
 import com.briup.apps.service.IManagerService;
 
 @Service
 public class ManagerServiceImpl implements IManagerService{
 	@Resource
 	private CoachMapper coachMapper;
+	@Resource
+	private CoachExtendMapper coachExtendMapper;
 	@Resource
 	private Coach_AcceptMapper coachAcceptMapper;
 	@Resource
@@ -35,36 +38,41 @@ public class ManagerServiceImpl implements IManagerService{
 	@Override
 	public void check(int coachId) {
 		Coach coach = coachMapper.selectByPrimaryKey(coachId);
-		if(coach.getStatus().equals("已审核")) {
-			throw new CustomerException("审核已完成，请不要重复操作!!!");
-		}else {
+		if(!coach.getStatus().equals("已审核")) {
 			Coach_AcceptExample example = new Coach_AcceptExample();
 			example.createCriteria().andNameEqualTo(coach.getName());
 			List<Coach_Accept> list = coachAcceptMapper.selectByExample(example);
 			if(list.size()<=0) {
-				Coach_Accept coachAccept = new Coach_Accept();
-				Car car = new Car();
-				coachAccept.setName(coach.getName());
-				coachAccept.setAge(coach.getAge());
-				coachAccept.setGender(coach.getGender());
-				coachAccept.setCharges(coach.getCharges());
-				coachAccept.setPassword(coach.getPassword());
-				coachAccept.setRoleId(3);
-				coachAcceptMapper.insert(coachAccept);
-				
-				
-				car.setCarNumber(coach.getCarNumber());
-				car.setCoachId(list.get(0).getId());
-				car.setType(coach.getCarType());
-				carMapper.insert(car);
-				
-				coach.setStatus("已审核");
-				coachMapper.updateByPrimaryKey(coach);
+					Coach_Accept coachAccept = new Coach_Accept();
+					Car car = new Car();
+					coachAccept.setName(coach.getName());
+					coachAccept.setAge(coach.getAge());
+					coachAccept.setGender(coach.getGender());
+					coachAccept.setCharges(coach.getCharges());
+					coachAccept.setPassword(coach.getPassword());
+					coachAccept.setRoleId(3);
+					coachAcceptMapper.insert(coachAccept);
+					
+					//把通过审核的数据重新查出来相应的id
+					Coach_AcceptExample example2 = new Coach_AcceptExample();
+					example2.createCriteria().andNameEqualTo(coachAccept.getName());
+					//System.out.println("-------------"+coachAccept.getCharges());
+					List<Coach_Accept> list2 = coachAcceptMapper.selectByExample(example2);
+					//System.out.println("--------------------"+list2.get(0).getId());
+					car.setCarNumber(coach.getCarNumber());
+					car.setCoachId(list2.get(0).getId());
+					car.setType(coach.getCarType());
+					carMapper.insert(car);
+					
+					coach.setStatus("已审核");
+					coachMapper.updateByPrimaryKey(coach);
+				}else {
+					throw new CustomerException("信息重复!!!");
+					}
 			}else {
-				throw new CustomerException("信息重复!!!");
+				throw new CustomerException("审核已完成，请不要重复操作!!!");
+				
 			}
-		
-		}
 		
 	}
 
@@ -74,9 +82,9 @@ public class ManagerServiceImpl implements IManagerService{
 		List<ArrangeTimeExtend> list = arrangeExtendMapper.findAll();
 		return list;
 	}
-
+	
 	@Override
-	public void addCoachAndCar(String name, int age, String gender, int charges, String password, String carNum,
+	public void addCoachAndCar(String name, Integer age, String gender, Integer charges, String password, String carNum,
 			String carType) {
 		Coach_AcceptExample example = new Coach_AcceptExample();
 		example.createCriteria().andNameEqualTo(name);
@@ -109,6 +117,13 @@ public class ManagerServiceImpl implements IManagerService{
 		carMapper.insert(car);
 		
 		}
+	}
+	
+	//查看所有教练的注册待审核信息
+	@Override
+	public List<Coach> findAll() {
+		List<Coach> list = coachExtendMapper.findAll();
+		return list;
 	}
 
 }

@@ -52,7 +52,7 @@ public class CoachServiceImpl implements ICoachService{
 			coach.setPassword(password);
 			coach.setCarNumber(carNum);
 			coach.setCarType(carType);
-			coach.setStatus("待审核!!!");
+			coach.setStatus("待审核");
 			coachMapper.insert(coach);
 		}
 		
