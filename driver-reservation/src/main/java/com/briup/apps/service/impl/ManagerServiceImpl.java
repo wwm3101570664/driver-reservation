@@ -11,13 +11,18 @@ import com.briup.apps.bean.CarExample;
 import com.briup.apps.bean.Coach;
 import com.briup.apps.bean.Coach_Accept;
 import com.briup.apps.bean.Coach_AcceptExample;
+import com.briup.apps.bean.Manager;
+import com.briup.apps.bean.ManagerExample;
 import com.briup.apps.bean.extend.ArrangeTimeExtend;
+import com.briup.apps.bean.extend.ManagerExtend;
 import com.briup.apps.config.CustomerException;
 import com.briup.apps.dao.CarMapper;
 import com.briup.apps.dao.CoachMapper;
 import com.briup.apps.dao.Coach_AcceptMapper;
+import com.briup.apps.dao.ManagerMapper;
 import com.briup.apps.dao.extend.ArrangeTimeExtendMapper;
 import com.briup.apps.dao.extend.CoachExtendMapper;
+import com.briup.apps.dao.extend.ManagerExtendMapper;
 import com.briup.apps.service.IManagerService;
 
 @Service
@@ -32,6 +37,10 @@ public class ManagerServiceImpl implements IManagerService{
 	private CarMapper carMapper;
 	@Resource
 	private ArrangeTimeExtendMapper arrangeExtendMapper;
+	@Resource
+	private ManagerMapper managerMapper;
+	@Resource
+	private ManagerExtendMapper managerExtendMapper;
 	
 	
 	//审核教练的注册信息
@@ -124,6 +133,33 @@ public class ManagerServiceImpl implements IManagerService{
 	public List<Coach> findAll() {
 		List<Coach> list = coachExtendMapper.findAll();
 		return list;
+	}
+
+	@Override
+	public Manager findByManagerId(int managerId) {
+		Manager manager = managerMapper.selectByPrimaryKey(managerId);
+		return manager;
+	}
+	
+	//管理员登录
+	@Override
+	public Manager login(String name, String password) {
+		ManagerExample example = new ManagerExample();
+		example.createCriteria().andNameEqualTo(name).andPasswordEqualTo(password);
+		List<Manager> list = managerMapper.selectByExample(example);
+		if(list.size()<=0) {
+			throw new CustomerException("管理员不存在!!!");
+		}else {
+			
+			return list.get(0);
+		}
+	}
+	
+	//通过管理员Id查找管理员
+	@Override
+	public ManagerExtend findManagerById(int managerId) {
+		ManagerExtend managerExtend = managerExtendMapper.findById(managerId);
+		return managerExtend;
 	}
 
 }

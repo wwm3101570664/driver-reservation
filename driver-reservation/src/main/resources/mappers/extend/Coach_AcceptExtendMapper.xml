@@ -5,11 +5,30 @@
 			   type="com.briup.apps.bean.Coach_Accept"
 			   extends="com.briup.apps.dao.Coach_AcceptMapper.BaseResultMap">
 	</resultMap>
+	<resultMap id="CoachAcceptExtendMap2" 
+			   type="com.briup.apps.bean.extend.Coach_AcceptExtend"
+			   extends="com.briup.apps.dao.Coach_AcceptMapper.BaseResultMap">
+			   <association property="roles"
+			   				column="role_id"
+			   				select="com.briup.apps.dao.RoleMapper.selectByPrimaryKey">
+			   </association>
+	</resultMap>
 	
 	<select id="findAll" resultMap="CoachAcceptExtendMap">
 		SELECT *
 		FROM coach_accept
 	</select>
+	
+	<select id="findById" resultMap="CoachAcceptExtendMap2">
+		SELECT *
+		FROM coach_accept
+		WHERE id = #{id,jdbcType=BIGINT}
+	</select>
+	
+	
+	
+	
+	
 	
 	
 	

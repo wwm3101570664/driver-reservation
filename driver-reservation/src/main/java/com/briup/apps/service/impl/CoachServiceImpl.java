@@ -13,11 +13,13 @@ import com.briup.apps.bean.Coach;
 import com.briup.apps.bean.Coach_Accept;
 import com.briup.apps.bean.Coach_AcceptExample;
 import com.briup.apps.bean.User;
+import com.briup.apps.bean.extend.Coach_AcceptExtend;
 import com.briup.apps.config.CustomerException;
 import com.briup.apps.dao.CarMapper;
 import com.briup.apps.dao.CoachMapper;
 import com.briup.apps.dao.Coach_AcceptMapper;
 import com.briup.apps.dao.extend.ArrangeTimeExtendMapper;
+import com.briup.apps.dao.extend.Coach_AcceptExtendMapper;
 import com.briup.apps.dao.extend.UserExtendMapper;
 import com.briup.apps.service.ICoachService;
 
@@ -33,16 +35,18 @@ public class CoachServiceImpl implements ICoachService{
 	private ArrangeTimeExtendMapper arrangeExtendMapper;
 	@Resource
 	private UserExtendMapper userExtendMapper;
+	@Resource
+	private Coach_AcceptExtendMapper coach_AcceptExtendMapper;
 	
 	
 	//教练注册
 	@Override
 	public void insert(String name, int age, String gender, int charges, String password, String carNum,String carType) {
 		Coach_AcceptExample example = new Coach_AcceptExample();
-		example.createCriteria().andNameEqualTo(name);
+		example.createCriteria().andNameEqualTo(name).andPasswordEqualTo(password);
 		List<Coach_Accept> list = coachAcceptMapper.selectByExample(example);
 		if(list.size()>0) {
-			throw new CustomerException("用户名重复!!!");
+			throw new CustomerException("用户名信息!!!");
 		}else {
 			Coach coach = new Coach();
 			coach.setName(name);
@@ -88,6 +92,32 @@ public class CoachServiceImpl implements ICoachService{
 	public List<User> findAllUsers(int coachId) {
 		List<User> list = userExtendMapper.findAllUsers(coachId);
 		return list;
+	}
+	
+	//通过教练id来查找教练
+	@Override
+	public Coach_Accept findByCoachId(int coachId) {
+		Coach_Accept coachAccept = coachAcceptMapper.selectByPrimaryKey(coachId);
+		return coachAccept;
+	}
+	//教练登录
+	@Override
+	public Coach_Accept login(String name, String password) {
+		Coach_AcceptExample example = new Coach_AcceptExample();
+		example.createCriteria().andNameEqualTo(name).andPasswordEqualTo(password);
+		List<Coach_Accept> list = coachAcceptMapper.selectByExample(example);
+		if(list.size()<=0) {
+			throw new CustomerException("教练不存在!!!");
+		}else {
+			return list.get(0);
+		}
+	}
+	
+	//通过教练id查找教练
+	@Override
+	public Coach_AcceptExtend findById(int coachId) {
+		Coach_AcceptExtend coach_AcceptExtend = coach_AcceptExtendMapper.findById(coachId);
+		return coach_AcceptExtend;
 	}
 
 }

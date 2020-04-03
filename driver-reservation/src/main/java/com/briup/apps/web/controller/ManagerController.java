@@ -1,6 +1,10 @@
 package com.briup.apps.web.controller;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
@@ -30,6 +34,7 @@ public class ManagerController {
 		return MessageUtil.success("审核完成!!!");
 	}
 	
+	//查询所有的预约安排（查看教练工作安排）
 	@GetMapping("findAllArrange")
 	public Message findAllArrange() {
 		List<ArrangeTimeExtend> list = managerService.findAllArrange();
@@ -58,5 +63,7 @@ public class ManagerController {
 		List<Coach> list = managerService.findAll();
 		return MessageUtil.success(list);
 	}
+	
+	
 	
 }

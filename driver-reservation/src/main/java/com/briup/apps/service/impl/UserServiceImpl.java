@@ -17,6 +17,7 @@ import com.briup.apps.bean.CommentExample;
 import com.briup.apps.bean.User;
 import com.briup.apps.bean.UserExample;
 import com.briup.apps.bean.extend.CarExtend;
+import com.briup.apps.bean.extend.UserExtend;
 import com.briup.apps.config.CustomerException;
 import com.briup.apps.dao.ArrangeTimeMapper;
 import com.briup.apps.dao.CarMapper;
@@ -25,6 +26,7 @@ import com.briup.apps.dao.CommentMapper;
 import com.briup.apps.dao.UserMapper;
 import com.briup.apps.dao.extend.CarExtendMapper;
 import com.briup.apps.dao.extend.Coach_AcceptExtendMapper;
+import com.briup.apps.dao.extend.UserExtendMapper;
 import com.briup.apps.service.IUserService;
 
 @Service
@@ -43,6 +45,8 @@ public class UserServiceImpl implements IUserService{
 	private CommentMapper commentMapper;
 	@Resource
 	private Coach_AcceptExtendMapper coach_acceptExtendMapper;
+	@Resource
+	private UserExtendMapper userExtendMapper;
 	
 	
 	//注册
@@ -169,6 +173,35 @@ public class UserServiceImpl implements IUserService{
 	public List<CarExtend> findAll() {
 		List<CarExtend> list = carExtendMapper.cascadeFindAll();
 		return list;
+	}
+	
+	//通过id来查找学员
+	@Override
+	public User findByUserId(int userId) {
+		User user = userMapper.selectByPrimaryKey(userId);
+		return user;
+	}
+	
+	
+	//学员登录
+	@Override
+	public User login(String name, String password) {
+		UserExample example = new UserExample();
+		example.createCriteria().andNameEqualTo(name).andPasswordEqualTo(password);
+		List<User> list = userMapper.selectByExample(example);
+		if(list.size()<=0) {
+			throw new CustomerException("学员还未注册!!!!");
+		}else {
+			return list.get(0);
+		}
+		
+		
+	}
+
+	@Override
+	public UserExtend findUserById(int userId) {
+		UserExtend userExtend = userExtendMapper.findById(userId);
+		return userExtend;
 	}
 
 }

@@ -6,10 +6,26 @@
 			   extends="com.briup.apps.dao.UserMapper.BaseResultMap">
 	</resultMap>
 	
+	<resultMap id="UserExtendMap2" 
+			   type="com.briup.apps.bean.extend.UserExtend"
+			   extends="com.briup.apps.dao.UserMapper.BaseResultMap">
+			   <association property="roles"
+			   				column="role_id"
+			   				select="com.briup.apps.dao.RoleMapper.selectByPrimaryKey">
+			   
+			   </association>
+	</resultMap>
+	
 	<select id="findAllUsers" resultMap="UserExtendMap" parameterType="int">
 		SELECT *
 		FROM users
 		WHERE coach_id = #{id,jdbcType=BIGINT}
+	</select>
+	
+	<select id="findById" resultMap="UserExtendMap2" parameterType="int">
+		SELECT *
+		FROM users
+		WHERE id = #{id,jdbcType=BIGINT}
 	</select>
 
 </mapper>
