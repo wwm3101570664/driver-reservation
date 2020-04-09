@@ -43,6 +43,9 @@ public class CoachServiceImpl implements ICoachService{
 	@Override
 	public void insert(String name, int age, String gender, int charges, String password, String carNum,String carType) {
 		Coach_AcceptExample example = new Coach_AcceptExample();
+		if(password.length()<6) {
+			throw new CustomerException("密码不能少于6位!!!");
+		}
 		example.createCriteria().andNameEqualTo(name).andPasswordEqualTo(password);
 		List<Coach_Accept> list = coachAcceptMapper.selectByExample(example);
 		if(list.size()>0) {

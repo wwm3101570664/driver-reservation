@@ -78,7 +78,7 @@ public class JwtTokenUtil {
 
             //userId是重要信息，进行加密下
             String encryId = Base64Util.encode(userId.toString());
-          //userId是重要信息，进行加密下
+          //roleId是重要信息，进行加密下
             String encryId2 = Base64Util.encode(roleId.toString());
 
             //添加构成JWT的参数

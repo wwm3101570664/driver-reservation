@@ -21,23 +21,24 @@ import com.briup.apps.utils.UnAuthorizedException;
  * @author: charles
  * @create: 2019-11-18 21:02
  **/
-
+//权限控制类
 public class JwtInterceptor extends HandlerInterceptorAdapter {
 
-//    @Autowired
-//    private IBasePrivilegeService basePrivilegeService;
 	@Autowired
 	private IPrivilegeService privilegeService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    	System.out.println("11111111111111111111111前端控制器执行");
         // 如果是options请求，直接返回true，不进行拦截
         if (request.getMethod().equals("OPTIONS")) {
             response.setStatus(HttpServletResponse.SC_OK);
             return true;
         }
         // 获取请求头信息authorization信息
-        final String token = request.getHeader(JwtTokenUtil.AUTH_HEADER_KEY);
+        //final String token = request.getHeader(JwtTokenUtil.AUTH_HEADER_KEY);
+        //此处请求头中没有设置成authorization字段，暂时通过X-Token来获取token
+        final String token = request.getHeader("X-Token");
         System.out.println("token:"+token);
         if(StringUtils.isEmpty(token)){
             throw new UnAuthorizedException("用户还未登录");
@@ -45,9 +46,10 @@ public class JwtInterceptor extends HandlerInterceptorAdapter {
         // 验证token是否有效--无效已做异常抛出，由全局异常处理后返回对应信息
         JwtTokenUtil.parseJWT(token, JwtTokenUtil.base64Secret);
 
-        // 验证权限，通过token获取用户角色id，通过用户橘色id获取权限，这里可以使用redis将用户信息维护在缓存中，减少与数据库交互次数
+        // 验证权限，通过token获取用户角色id，通过用户角色id获取权限，这里可以使用redis将用户信息维护在缓存中，减少与数据库交互次数
         //long id = Long.parseLong(JwtTokenUtil.getUserId(token,JwtTokenUtil.base64Secret));
         int roleId = Integer.parseInt(JwtTokenUtil.getRoleId(token,JwtTokenUtil.base64Secret));
+        System.out.println("in----------"+roleId);
         this.auth(roleId,request.getServletPath());
 
         return true;

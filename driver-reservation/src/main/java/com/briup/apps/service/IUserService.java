@@ -20,4 +20,5 @@ public interface IUserService {
 	User findByUserId(int userId);
 	User login(String name,String password);
 	UserExtend findUserById(int userId);
+	User selectById(int id);
 }

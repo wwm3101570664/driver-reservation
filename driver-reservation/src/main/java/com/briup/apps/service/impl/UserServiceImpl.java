@@ -52,8 +52,10 @@ public class UserServiceImpl implements IUserService{
 	//注册
 	@Override
 	public void insert(String name, int age, String gender, String password) {
+		if(password.length()<6) {
+			throw new CustomerException("密码不能少于6位!!!");
+		}
 		User user = new User();
-		
 		UserExample example = new UserExample();
 		example.createCriteria().andNameEqualTo(name);
 		List<User> list = userMapper.selectByExample(example);
@@ -99,24 +101,29 @@ public class UserServiceImpl implements IUserService{
 		
 		User user = userMapper.selectByPrimaryKey(userId);
 		int coachId = user.getCoachId();
-		CarExample carExample = new CarExample();
-		carExample.createCriteria().andCoachIdEqualTo(coachId);
-		List<Car> carList = carMapper.selectByExample(carExample);
-		
-		ArrangeTimeExample example = new ArrangeTimeExample();
-		example.createCriteria().andUserIdEqualTo(userId);
-		List<ArrangeTime> list = arrangeMapper.selectByExample(example);
-		if(list.size()>0) {
-			throw new CustomerException("您已有预约，如想预约成功，请取消上次预约!!!");
-		}else {
-			ArrangeTime arrange = new ArrangeTime();
-			arrange.setCarId(carList.get(0).getId());
-			arrange.setUserId(userId);
-			arrange.setCoachId(coachId);
-			arrange.setStarttime(new Date().getTime());
-			arrange.setEndtime(new Date().getTime());
-			arrange.setStatus("已预约!!!");
-			arrangeMapper.insert(arrange);
+		if(coachId!=0) {
+			CarExample carExample = new CarExample();
+			carExample.createCriteria().andCoachIdEqualTo(coachId);
+			List<Car> carList = carMapper.selectByExample(carExample);
+			
+			ArrangeTimeExample example = new ArrangeTimeExample();
+			example.createCriteria().andUserIdEqualTo(userId);
+			List<ArrangeTime> list = arrangeMapper.selectByExample(example);
+			if(list.size()>0) {
+				throw new CustomerException("您已有预约，如想预约成功，请取消上次预约!!!");
+			}else {
+				ArrangeTime arrange = new ArrangeTime();
+				arrange.setCarId(carList.get(0).getId());
+				arrange.setUserId(userId);
+				arrange.setCoachId(coachId);
+				arrange.setStarttime(new Date().getTime());
+				arrange.setEndtime(new Date().getTime());
+				arrange.setStatus("已预约!!!");
+				arrangeMapper.insert(arrange);
+			}
+		}
+		else {
+			throw new CustomerException("你还未选择教练，请选择教练!!!");
 		}
 		
 	}
@@ -202,6 +209,12 @@ public class UserServiceImpl implements IUserService{
 	public UserExtend findUserById(int userId) {
 		UserExtend userExtend = userExtendMapper.findById(userId);
 		return userExtend;
+	}
+
+	@Override
+	public User selectById(int id) {
+		User user = userMapper.selectByPrimaryKey(id);
+		return user;
 	}
 
 }
