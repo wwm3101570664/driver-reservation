@@ -66,17 +66,18 @@
     <table tableName="base_user" domainObjectName="User" ></table>
     <table tableName="base_user_role" domainObjectName="User_Role" ></table> -->
     
-   <!--  <table tableName="arrangeTime" domainObjectName="ArrangeTime" ></table>
-    <table tableName="car" domainObjectName="Car" ></table>
+    <table tableName="arrangeTime" domainObjectName="ArrangeTime" ></table>
+   <!--  <table tableName="car" domainObjectName="Car" ></table>
     <table tableName="coach" domainObjectName="Coach" ></table> 
     <table tableName="coach_accept" domainObjectName="Coach_Accept" ></table> 
     <table tableName="users" domainObjectName="User" ></table>
-    <table tableName="manager" domainObjectName="Manager" ></table>
+    <table tableName="manager" domainObjectName="Manager" ></table>-->
     <table tableName="comment" domainObjectName="Comment" >
     	<columnOverride column="content" javaType="java.lang.String" jdbcType="VARCHAR"></columnOverride>
-    </table> -->
+    </table> 
    <!--  <table tableName="role" domainObjectName="Role" ></table> -->
-    <table tableName="privilege" domainObjectName="Privilege" ></table>
+   <!--  <table tableName="privilege" domainObjectName="Privilege" ></table> -->
+    <table tableName="announcement" domainObjectName="Announcement" ></table>
 	
 	<!--
 	 mvn -Dmybatis.generator.overwrite=true mybatis-generator:generate

@@ -20,5 +20,13 @@
 		SELECT *
 		FROM car
 	</select>
+	
+	<select id="findCoachDetails" resultMap="CarExtendMap" >
+		SELECT *
+		FROM car
+		WHERE coach_id = #{id,jdbcType=BIGINT}
+	</select>
+	
+	
 
 </mapper>

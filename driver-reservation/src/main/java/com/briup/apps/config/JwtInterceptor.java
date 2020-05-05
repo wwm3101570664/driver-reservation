@@ -29,7 +29,6 @@ public class JwtInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-    	System.out.println("11111111111111111111111前端控制器执行");
         // 如果是options请求，直接返回true，不进行拦截
         if (request.getMethod().equals("OPTIONS")) {
             response.setStatus(HttpServletResponse.SC_OK);
@@ -68,14 +67,6 @@ public class JwtInterceptor extends HandlerInterceptorAdapter {
               }
 		}
     	
-//        List<BasePrivilege> privileges = basePrivilegeService.findByUserId(userId);
-//        // 匹配
-//        for(BasePrivilege p : privileges){
-//            System.out.println(p.getRoute()+"="+path);
-//            if(p.getRoute().matches(path)){
-//                return true;
-//            }
-//        }
         throw new PermissionException("权限不足");
     }
 }

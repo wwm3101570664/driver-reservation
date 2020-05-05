@@ -13,12 +13,15 @@ import com.briup.apps.bean.Coach;
 import com.briup.apps.bean.Coach_Accept;
 import com.briup.apps.bean.Coach_AcceptExample;
 import com.briup.apps.bean.User;
+import com.briup.apps.bean.extend.ArrangeTimeExtend;
+import com.briup.apps.bean.extend.CarExtend;
 import com.briup.apps.bean.extend.Coach_AcceptExtend;
 import com.briup.apps.config.CustomerException;
 import com.briup.apps.dao.CarMapper;
 import com.briup.apps.dao.CoachMapper;
 import com.briup.apps.dao.Coach_AcceptMapper;
 import com.briup.apps.dao.extend.ArrangeTimeExtendMapper;
+import com.briup.apps.dao.extend.CarExtendMapper;
 import com.briup.apps.dao.extend.Coach_AcceptExtendMapper;
 import com.briup.apps.dao.extend.UserExtendMapper;
 import com.briup.apps.service.ICoachService;
@@ -37,6 +40,8 @@ public class CoachServiceImpl implements ICoachService{
 	private UserExtendMapper userExtendMapper;
 	@Resource
 	private Coach_AcceptExtendMapper coach_AcceptExtendMapper;
+	@Resource
+	private CarExtendMapper carExtendMapper;
 	
 	
 	//教练注册
@@ -83,10 +88,10 @@ public class CoachServiceImpl implements ICoachService{
 		carMapper.updateByPrimaryKey(car);
 	}
 	
-	//查看教学安排
+	//通过教练Id查看教练的教学安排
 	@Override
-	public List<ArrangeTime> findAllArrange(int coachId) {
-		List<ArrangeTime> list = arrangeExtendMapper.findAllArrange(coachId);
+	public List<ArrangeTimeExtend> findAllArrangeByCoachId(int coachId) {
+		List<ArrangeTimeExtend> list = arrangeExtendMapper.findAllArrangeByCoachId(coachId);
 		return list;
 	}
 	
@@ -121,6 +126,12 @@ public class CoachServiceImpl implements ICoachService{
 	public Coach_AcceptExtend findById(int coachId) {
 		Coach_AcceptExtend coach_AcceptExtend = coach_AcceptExtendMapper.findById(coachId);
 		return coach_AcceptExtend;
+	}
+
+	@Override
+	public List<CarExtend> findCoachById(int coachId) {
+		List<CarExtend> list = carExtendMapper.findCoachDetails(coachId);
+		return list;
 	}
 
 }

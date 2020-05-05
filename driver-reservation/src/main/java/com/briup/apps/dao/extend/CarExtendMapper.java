@@ -7,4 +7,5 @@ import com.briup.apps.bean.extend.CarExtend;
 public interface CarExtendMapper {
 	CarExtend cascadeById(int carId);
 	List<CarExtend> cascadeFindAll();
+	List<CarExtend> findCoachDetails(int coachId);
 }

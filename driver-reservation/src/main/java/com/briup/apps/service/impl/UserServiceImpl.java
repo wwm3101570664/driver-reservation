@@ -1,7 +1,12 @@
 package com.briup.apps.service.impl;
 
+
+
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
@@ -16,7 +21,9 @@ import com.briup.apps.bean.Comment;
 import com.briup.apps.bean.CommentExample;
 import com.briup.apps.bean.User;
 import com.briup.apps.bean.UserExample;
+import com.briup.apps.bean.extend.ArrangeTimeExtend;
 import com.briup.apps.bean.extend.CarExtend;
+import com.briup.apps.bean.extend.CommentExtend;
 import com.briup.apps.bean.extend.UserExtend;
 import com.briup.apps.config.CustomerException;
 import com.briup.apps.dao.ArrangeTimeMapper;
@@ -24,8 +31,10 @@ import com.briup.apps.dao.CarMapper;
 import com.briup.apps.dao.Coach_AcceptMapper;
 import com.briup.apps.dao.CommentMapper;
 import com.briup.apps.dao.UserMapper;
+import com.briup.apps.dao.extend.ArrangeTimeExtendMapper;
 import com.briup.apps.dao.extend.CarExtendMapper;
 import com.briup.apps.dao.extend.Coach_AcceptExtendMapper;
+import com.briup.apps.dao.extend.CommentExtendMapper;
 import com.briup.apps.dao.extend.UserExtendMapper;
 import com.briup.apps.service.IUserService;
 
@@ -38,6 +47,8 @@ public class UserServiceImpl implements IUserService{
 	@Resource
 	private ArrangeTimeMapper arrangeMapper;
 	@Resource
+	private ArrangeTimeExtendMapper arrangeExtendMapper;
+	@Resource
 	private CarMapper carMapper;
 	@Resource
 	private CarExtendMapper carExtendMapper;
@@ -47,6 +58,8 @@ public class UserServiceImpl implements IUserService{
 	private Coach_AcceptExtendMapper coach_acceptExtendMapper;
 	@Resource
 	private UserExtendMapper userExtendMapper;
+	@Resource
+	private CommentExtendMapper commentExtendMapper;
 	
 	
 	//注册
@@ -88,17 +101,40 @@ public class UserServiceImpl implements IUserService{
 	
 	//绑定个人信息
 	@Override
-	public void binding(int id,String phoneNum, String email) {
+	public void saveOrUpdate(int id,String phoneNum,String email) {
 		User user = userMapper.selectByPrimaryKey(id);
-		user.setPhonenum(phoneNum);
-		user.setEmail(email);
-		userMapper.updateByPrimaryKey(user);
+		if(user!=null) {
+		//校验电话号码
+		String regExp = "^((13[0-9])|(14[5,7,9])|(15[0-3,5-9])|(166)|(17[3,5,6,7,8])" +
+	                "|(18[0-9])|(19[8,9]))\\d{8}$";
+	    Pattern p = Pattern.compile(regExp);
+	    Matcher m = p.matcher(phoneNum);
+	  //校验邮箱
+  		String regExp2 = "\\w+@\\w{2,6}(.\\w{2,3})+";
+  	    Pattern p2 = Pattern.compile(regExp2);
+  	    Matcher m2 = p2.matcher(phoneNum);
+  	    
+	    if(phoneNum.matches(regExp)) {
+	    	user.setPhonenum(phoneNum);
+	    	if(m2.matches()) {
+	    		user.setEmail(email);
+	    		userMapper.updateByPrimaryKey(user);
+	    	}else {
+	    		throw new CustomerException("邮箱格式错误!!!");
+	    	}
+	    	
+	    }else {
+	    	throw new CustomerException("电话号码格式错误!!!");
+	    }
+	}else {
+		throw new CustomerException("用户不存在!!!");
+	}
 	}
 	
 	//学员预约练车
 	@Override
-	public void Booking(int userId) {
-		
+	public void Booking(int userId, Date date) {
+		long time = date.getTime();
 		User user = userMapper.selectByPrimaryKey(userId);
 		int coachId = user.getCoachId();
 		if(coachId!=0) {
@@ -116,8 +152,9 @@ public class UserServiceImpl implements IUserService{
 				arrange.setCarId(carList.get(0).getId());
 				arrange.setUserId(userId);
 				arrange.setCoachId(coachId);
-				arrange.setStarttime(new Date().getTime());
-				arrange.setEndtime(new Date().getTime());
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				String format = sdf.format(date);
+				arrange.setDate(format);
 				arrange.setStatus("已预约!!!");
 				arrangeMapper.insert(arrange);
 			}
@@ -144,8 +181,9 @@ public class UserServiceImpl implements IUserService{
 	
 	//查看教练信息、车辆信息
 	@Override
-	public CarExtend findMessages(int coachId) {
-		
+	public CarExtend findMessages(int userId) {
+		User user = userMapper.selectByPrimaryKey(userId);
+		Integer coachId = user.getCoachId();
 		CarExample example = new CarExample();
 		example.createCriteria().andCoachIdEqualTo(coachId);
 		List<Car> cars = carMapper.selectByExample(example );
@@ -160,19 +198,19 @@ public class UserServiceImpl implements IUserService{
 		int coachId = user.getCoachId();
 		 Comment comments = new Comment();
 		 comments.setCoachId(coachId);
-		 comments.setCommentTime(new Date().getTime());
+		 long currentTimeMillis = System.currentTimeMillis();
+		 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		 String format = sdf.format(new Date(currentTimeMillis));
+		 comments.setCommentTime(format);
 		 comments.setUserId(userId);
 		 comments.setContent(comment);
 		 commentMapper.insert(comments);
-		
 	}
 	
 	//查看教练评论信息
 	@Override
-	public List<Comment> findComments(int coachId) {
-		CommentExample example = new CommentExample();
-		example.createCriteria().andCoachIdEqualTo(coachId);
-		List<Comment> list = commentMapper.selectByExample(example);
+	public List<CommentExtend> findComments(int coachId) {
+		List<CommentExtend> list = commentExtendMapper.findByCoachId(coachId);
 		return list;
 	}
 
@@ -215,6 +253,13 @@ public class UserServiceImpl implements IUserService{
 	public User selectById(int id) {
 		User user = userMapper.selectByPrimaryKey(id);
 		return user;
+	}
+	
+	//学员查询预约情况
+	@Override
+	public List<ArrangeTimeExtend> findArrange(int userId) {
+		List<ArrangeTimeExtend> list = arrangeExtendMapper.findArrangeByUserId(userId);
+		return list;
 	}
 
 }

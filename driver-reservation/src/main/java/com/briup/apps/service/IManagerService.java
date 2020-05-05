@@ -2,6 +2,7 @@ package com.briup.apps.service;
 
 import java.util.List;
 
+import com.briup.apps.bean.Announcement;
 import com.briup.apps.bean.Coach;
 import com.briup.apps.bean.Manager;
 import com.briup.apps.bean.extend.ArrangeTimeExtend;
@@ -15,4 +16,6 @@ public interface IManagerService {
 	Manager findByManagerId(int managerId);
 	Manager login(String name,String password);
 	ManagerExtend findManagerById(int managerId);
+	void pushAnnouncement(String content);
+	List<Announcement> findAllAnnouncement();
 }

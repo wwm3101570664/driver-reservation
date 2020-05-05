@@ -1,11 +1,14 @@
 package com.briup.apps.service.impl;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
 
+import com.briup.apps.bean.Announcement;
 import com.briup.apps.bean.Car;
 import com.briup.apps.bean.CarExample;
 import com.briup.apps.bean.Coach;
@@ -16,10 +19,12 @@ import com.briup.apps.bean.ManagerExample;
 import com.briup.apps.bean.extend.ArrangeTimeExtend;
 import com.briup.apps.bean.extend.ManagerExtend;
 import com.briup.apps.config.CustomerException;
+import com.briup.apps.dao.AnnouncementMapper;
 import com.briup.apps.dao.CarMapper;
 import com.briup.apps.dao.CoachMapper;
 import com.briup.apps.dao.Coach_AcceptMapper;
 import com.briup.apps.dao.ManagerMapper;
+import com.briup.apps.dao.extend.AnnouncementExtendMapper;
 import com.briup.apps.dao.extend.ArrangeTimeExtendMapper;
 import com.briup.apps.dao.extend.CoachExtendMapper;
 import com.briup.apps.dao.extend.ManagerExtendMapper;
@@ -41,6 +46,10 @@ public class ManagerServiceImpl implements IManagerService{
 	private ManagerMapper managerMapper;
 	@Resource
 	private ManagerExtendMapper managerExtendMapper;
+	@Resource
+	private AnnouncementExtendMapper announcementExtendMapper;
+	@Resource
+	private AnnouncementMapper announcementMapper;
 	
 	
 	//审核教练的注册信息
@@ -161,5 +170,27 @@ public class ManagerServiceImpl implements IManagerService{
 		ManagerExtend managerExtend = managerExtendMapper.findById(managerId);
 		return managerExtend;
 	}
+	
+	//发布公告
+	@Override
+	public void pushAnnouncement(String content) {
+		Announcement ann = new Announcement();
+		long currentTimeMillis = System.currentTimeMillis();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String format = sdf.format(new Date(currentTimeMillis));
+		ann.setContent(content);
+		ann.setTime(format);
+		announcementMapper.insert(ann);
+	}
+	
+	//查询公告
+	@Override
+	public List<Announcement> findAllAnnouncement() {
+		List<Announcement> list = announcementExtendMapper.findAll();
+		return list;
+	}
+	
+	
+	
 
 }
