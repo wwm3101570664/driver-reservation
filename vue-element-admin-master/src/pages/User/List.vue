@@ -25,7 +25,7 @@
             <el-form-item label="练车时间选择">
               <el-col :span="11">
                 <el-form-item >
-                  <el-date-picker type="date" placeholder="选择练车日期" v-model="newArrange.da" style="width: 100%;"></el-date-picker>
+                  <el-date-picker type="date" value-format="yyyy-MM-dd" placeholder="选择练车日期" v-model="newArrange.date" @change="toArrange2"  style="width: 100%;"></el-date-picker>
                 </el-form-item>
               </el-col>
             </el-form-item>
@@ -94,7 +94,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="手机号" label-width="80px">
-          <el-input v-model="form.phoneNum" autocomplete="off"></el-input>
+          <el-input v-model="form.phonenum" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="邮箱" label-width="80px">
           <el-input v-model="form.email" autocomplete="off"></el-input>
@@ -134,7 +134,7 @@ export default {
             coachAccept:[],
 
             newArrange:[{
-              da:[]
+              date:""
             }],
             visible5:false
         }
@@ -217,7 +217,8 @@ export default {
                 toArrange(){
                     this.visible5=true;
                 },
-                 toArrange2(){
+                 toArrange2(val){
+                   this.newArrange.date=val;
                      request.request({
                     url:'/users/booking',
                     method:'post',

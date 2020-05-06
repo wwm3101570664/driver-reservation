@@ -92,6 +92,13 @@
               <el-button type="primary" size="small" @click="toPush2">确 定</el-button>
           </div>
         </el-dialog>
+
+        <el-dialog title="教练评价信息" :visible.sync="visible4">
+        <el-table :data="comment" style="width: 100%">
+        <el-table-column prop="commentTime" label="评论时间" width="180"></el-table-column>
+        <el-table-column prop="content" label="评论内容" width="180"></el-table-column>
+    </el-table>
+    </el-dialog>
     </div>
 </template>
 <script>
@@ -106,7 +113,9 @@ export default {
             addUser:[],
             visible2:false,
             form:[],
-            visible3:false
+            visible3:false,
+            comment:[],
+            visible4:false
         }
     },
     created(){
@@ -119,12 +128,17 @@ export default {
             this.coachAccepts = result.data;
         })
         },
-        toReview(){
-            let url = "/users/findMessages"
-            request.get(url,{params:{coachId:id}})
+        toReview(id){
+            this.visible4=true;
+            let url = "/users/findComment"
+            request.get(url+"?coachId="+id)
+            .then(result=>{
+                    this.comment = result.data;
+            }) 
             .then(response=>{
                 this.$message({
                     message:response.message,
+                    center: true
                 })
             })
         },
