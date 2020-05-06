@@ -10,6 +10,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -40,11 +41,11 @@ public class UsersController {
 	}
 	
 	@PostMapping("saveOrUpdate")
-	public Message binding(HttpServletRequest request,String phoneNum,String email) {
+	public Message binding(HttpServletRequest request,String phonenum,String email) {
 		final String token = request.getHeader("X-Token");
 		//从token中获取用户id
 		int id = (int) Long.parseLong(JwtTokenUtil.getUserId(token,JwtTokenUtil.base64Secret));
-		userService.saveOrUpdate(id,phoneNum, email);
+		userService.saveOrUpdate(id,phonenum, email);
 		return MessageUtil.success("绑定信息成功!!!");
 	}
 	
@@ -68,7 +69,8 @@ public class UsersController {
 		@ApiImplicitParam(name="date",value = "练车时间",paramType = "query",required = true,dataType = "Date")
 	})
 	@PostMapping("booking")
-	public Message booking(Date date,HttpServletRequest request) {
+	public Message booking(String date,HttpServletRequest request) {
+		System.out.println("练车日期选择："+date);
 		final String token = request.getHeader("X-Token");
 		//从token中获取用户id
 		int id = (int) Long.parseLong(JwtTokenUtil.getUserId(token,JwtTokenUtil.base64Secret));

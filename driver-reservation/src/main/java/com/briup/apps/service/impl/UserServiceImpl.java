@@ -107,16 +107,16 @@ public class UserServiceImpl implements IUserService{
 		//校验电话号码
 		String regExp = "^((13[0-9])|(14[5,7,9])|(15[0-3,5-9])|(166)|(17[3,5,6,7,8])" +
 	                "|(18[0-9])|(19[8,9]))\\d{8}$";
-	    Pattern p = Pattern.compile(regExp);
-	    Matcher m = p.matcher(phoneNum);
+//	    Pattern p = Pattern.compile(regExp);
+//	    Matcher m = p.matcher(phoneNum);
 	  //校验邮箱
-  		String regExp2 = "\\w+@\\w{2,6}(.\\w{2,3})+";
-  	    Pattern p2 = Pattern.compile(regExp2);
-  	    Matcher m2 = p2.matcher(phoneNum);
+  		String regExp2 = "^[a-zA-Z0-9]+([-_.][a-zA-Z0-9]+)*@[a-zA-Z0-9]+([-_.][a-zA-Z0-9]+)*\\.[a-z]{2,}$";
+//  	    Pattern p2 = Pattern.compile(regExp2);
+//  	    Matcher m2 = p2.matcher(phoneNum);
   	    
 	    if(phoneNum.matches(regExp)) {
 	    	user.setPhonenum(phoneNum);
-	    	if(m2.matches()) {
+	    	if(email.matches(regExp2)) {
 	    		user.setEmail(email);
 	    		userMapper.updateByPrimaryKey(user);
 	    	}else {
@@ -133,11 +133,11 @@ public class UserServiceImpl implements IUserService{
 	
 	//学员预约练车
 	@Override
-	public void Booking(int userId, Date date) {
-		long time = date.getTime();
+	public void Booking(int userId, String date) {
 		User user = userMapper.selectByPrimaryKey(userId);
-		int coachId = user.getCoachId();
-		if(coachId!=0) {
+		int coachId;
+		if(user.getCoachId()!=null) {
+			coachId = user.getCoachId();
 			CarExample carExample = new CarExample();
 			carExample.createCriteria().andCoachIdEqualTo(coachId);
 			List<Car> carList = carMapper.selectByExample(carExample);
@@ -152,9 +152,7 @@ public class UserServiceImpl implements IUserService{
 				arrange.setCarId(carList.get(0).getId());
 				arrange.setUserId(userId);
 				arrange.setCoachId(coachId);
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				String format = sdf.format(date);
-				arrange.setDate(format);
+				arrange.setDate(date);
 				arrange.setStatus("已预约!!!");
 				arrangeMapper.insert(arrange);
 			}
@@ -183,12 +181,17 @@ public class UserServiceImpl implements IUserService{
 	@Override
 	public CarExtend findMessages(int userId) {
 		User user = userMapper.selectByPrimaryKey(userId);
-		Integer coachId = user.getCoachId();
-		CarExample example = new CarExample();
-		example.createCriteria().andCoachIdEqualTo(coachId);
-		List<Car> cars = carMapper.selectByExample(example );
-		CarExtend carExtend = carExtendMapper.cascadeById(cars.get(0).getId());
-		return carExtend;
+		Integer coachId;
+		if(user.getCoachId()!=null) {
+			coachId = user.getCoachId();
+			CarExample example = new CarExample();
+			example.createCriteria().andCoachIdEqualTo(coachId);
+			List<Car> cars = carMapper.selectByExample(example );
+			CarExtend carExtend = carExtendMapper.cascadeById(cars.get(0).getId());
+			return carExtend;
+		}else {
+			throw new CustomerException("您还未选择教练，暂时不能获取到教练信息!!!");
+		}
 	}
 	
 	//对教练进行评价

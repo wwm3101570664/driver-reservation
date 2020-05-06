@@ -17,7 +17,7 @@ public interface IUserService {
 	void selectCoach(int id,int coachId);
 	List<CarExtend> findAll();
 	void saveOrUpdate(int id,String phoneNum,String email);
-	void Booking(int userId,Date date);
+	void Booking(int userId,String date);
 	void deleteBooking(int userId);
 	CarExtend findMessages(int userId);
 	void makeComments(int userId,String comment);
