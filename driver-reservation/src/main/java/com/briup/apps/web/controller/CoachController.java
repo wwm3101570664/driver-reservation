@@ -96,5 +96,11 @@ public class CoachController {
 		List<CarExtend> list = coachService.findCoachById(id);
 		return MessageUtil.success(list);
 	}
+	@GetMapping("sendMessages")
+	public Message sendMessage(String phoneNum,String dateTime) {
+		System.out.println(phoneNum+","+dateTime);
+		coachService.SendMessages(phoneNum, dateTime);
+		return MessageUtil.success("发送短信成功");
+	}
 	
 }

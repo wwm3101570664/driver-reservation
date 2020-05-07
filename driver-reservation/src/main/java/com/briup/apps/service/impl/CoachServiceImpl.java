@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.briup.apps.bean.ArrangeTime;
@@ -25,6 +26,7 @@ import com.briup.apps.dao.extend.CarExtendMapper;
 import com.briup.apps.dao.extend.Coach_AcceptExtendMapper;
 import com.briup.apps.dao.extend.UserExtendMapper;
 import com.briup.apps.service.ICoachService;
+import com.briup.apps.utils.SendMessage;
 
 @Service
 public class CoachServiceImpl implements ICoachService{
@@ -42,6 +44,7 @@ public class CoachServiceImpl implements ICoachService{
 	private Coach_AcceptExtendMapper coach_AcceptExtendMapper;
 	@Resource
 	private CarExtendMapper carExtendMapper;
+	
 	
 	
 	//教练注册
@@ -132,6 +135,16 @@ public class CoachServiceImpl implements ICoachService{
 	public List<CarExtend> findCoachById(int coachId) {
 		List<CarExtend> list = carExtendMapper.findCoachDetails(coachId);
 		return list;
+	}
+
+	@Override
+	public void SendMessages(String phoneNum, String dateTime) {
+		try {
+			SendMessage.send(phoneNum, dateTime);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 }

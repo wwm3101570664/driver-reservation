@@ -17,4 +17,5 @@ public interface ICoachService {
 	Coach_Accept login(String name,String password);
 	Coach_AcceptExtend findById(int coachId);
 	List<CarExtend> findCoachById(int coachId);
+	void SendMessages(String phoneNum,String dateTime);
 }
