@@ -58,6 +58,11 @@
             <el-table-column prop="user.name" label="学员姓名" width="180"></el-table-column>
             <el-table-column prop="car.carNumber" label="教练车车牌" width="180"></el-table-column>
             <el-table-column prop="user.phonenum" label="电话" width="180"></el-table-column>
+            <el-table-column fixed="right" label="操作" align="center" width="200">
+          <template slot-scope="scope">
+              <el-button @click="toPass(scope.row.date,scope.row.user.phonenum)" type="text" size="small">发送短信提醒练车</el-button>
+          </template>
+      </el-table-column>
       </el-table>
     </el-dialog>
 
@@ -129,6 +134,10 @@ export default {
             },
             toDownLoad(){
                 request.get("/coach/download")
+            },
+            toPass(date,phoneNum){
+              let url = "/coach/sendMessages";
+                request.get(url+"?dateTime="+date+"&phoneNum="+phoneNum);
             }
         }
     
