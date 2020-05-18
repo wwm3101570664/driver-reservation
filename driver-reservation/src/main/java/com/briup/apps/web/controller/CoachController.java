@@ -19,11 +19,14 @@ import com.briup.apps.bean.extend.ArrangeTimeExtend;
 import com.briup.apps.bean.extend.CarExtend;
 import com.briup.apps.bean.extend.Coach_AcceptExtend;
 import com.briup.apps.service.ICoachService;
+import com.briup.apps.utils.Excel;
 import com.briup.apps.utils.ExcelUtils;
 import com.briup.apps.utils.JwtTokenUtil;
 import com.briup.apps.utils.Message;
 import com.briup.apps.utils.MessageUtil;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
@@ -32,6 +35,18 @@ public class CoachController {
 	@Autowired
 	private ICoachService coachService;
 	
+	@ApiOperation(value = "教练注册")
+	//paramType=form适用于表单提交和post
+	@ApiImplicitParams({
+		//@ApiImplicitParam(name="id",value = "用户id",paramType = "query",required = true ,dataType = "int"),
+		@ApiImplicitParam(name="name",value = "教练姓名",paramType = "query",required = true,dataType = "string"),
+		@ApiImplicitParam(name="age",value = "教练年龄",paramType = "query",required = true,dataType = "int"),
+		@ApiImplicitParam(name="gender",value = "教练性别",paramType = "query",required = true,dataType = "string"),
+		@ApiImplicitParam(name="charges",value = "教练收费",paramType = "query",required = true,dataType = "int"),
+		@ApiImplicitParam(name="password",value = "教练密码",paramType = "query",required = true,dataType = "string"),
+		@ApiImplicitParam(name="carNum",value = "教练车车牌号",paramType = "query",required = true,dataType = "string"),
+		@ApiImplicitParam(name="carType",value = "教练车类型",paramType = "query",required = true,dataType = "string")
+	})
 	@PostMapping("register")
 	public Message register(String name, int age, String gender, int charges, String password, String carNum,String carType) {
 		coachService.insert(name, age, gender, charges, password, carNum, carType);
@@ -39,11 +54,11 @@ public class CoachController {
 	}
 	
 	@PostMapping("saveOrUpdate")
-	public Message saveOrUpdate(HttpServletRequest request,int age,int charges,String password,String carNum,String carType) {
+	public Message saveOrUpdate(HttpServletRequest request,int age,int charges,String carNumber,String type) {
 		final String token = request.getHeader("X-Token");
 		//从token中获取用户id
 		int id = (int) Long.parseLong(JwtTokenUtil.getUserId(token,JwtTokenUtil.base64Secret));
-		coachService.saveOrUpdate(id, age, charges, password, carNum, carType);
+		coachService.saveOrUpdate(id, age, charges, carNumber, type);
 		return MessageUtil.success("修改成功!!!");
 	}
 	
@@ -58,10 +73,10 @@ public class CoachController {
 	
 	 @ApiOperation(value="将文章导入到Excel中",notes="注意！测试的时候请将地址粘贴到浏览器地址栏测试",produces="application/octet-stream")
 	 @GetMapping("download")
-	 public void download(HttpServletResponse response,HttpServletRequest request) throws Exception{
+	 public Message download(HttpServletResponse response,HttpServletRequest request) throws Exception{
 		 String excelName="Arrange";
-		 String[] headList  = {"学员姓名","开始时间","结束时间"};
-		 String[] fieldList = {"userName","starttime","endtime","carNum","carType"};
+		 String[] headList  = {"学员姓名","练车时间","车牌号","车辆类型"};
+		 String[] fieldList = {"userName","date","carNum","carType"};
 		 List<Map<String, Object>> dataList = new ArrayList<>();
 		 final String token = request.getHeader("X-Token");
 			//从token中获取用户id
@@ -72,11 +87,13 @@ public class CoachController {
 			map.put("userName", arrangeTimeExtend.getUser().getName());
 			map.put("date", arrangeTimeExtend.getDate());
 			map.put("carNum", arrangeTimeExtend.getCar().getCarNumber());
-			map.put("carNum", arrangeTimeExtend.getCar().getType());
+			map.put("carType", arrangeTimeExtend.getCar().getType());
 			dataList.add(map);
 		}
 		 //导出Excel
-		 ExcelUtils.createExcel(response, excelName, headList, fieldList, dataList);
+//		ExcelUtils.createExcel(response, excelName, headList, fieldList, dataList);
+		 Excel.createExcel(dataList, fieldList, headList);
+		return MessageUtil.success("下载成功,请返回桌面查看");
 	 }
 	
 	@GetMapping("findAllUsers")

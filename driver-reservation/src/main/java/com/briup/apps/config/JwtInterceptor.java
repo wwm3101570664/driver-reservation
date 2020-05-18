@@ -48,7 +48,7 @@ public class JwtInterceptor extends HandlerInterceptorAdapter {
         // 验证权限，通过token获取用户角色id，通过用户角色id获取权限，这里可以使用redis将用户信息维护在缓存中，减少与数据库交互次数
         //long id = Long.parseLong(JwtTokenUtil.getUserId(token,JwtTokenUtil.base64Secret));
         int roleId = Integer.parseInt(JwtTokenUtil.getRoleId(token,JwtTokenUtil.base64Secret));
-        System.out.println("in----------"+roleId);
+//        System.out.println("in----------"+roleId);
         this.auth(roleId,request.getServletPath());
 
         return true;
@@ -61,7 +61,7 @@ public class JwtInterceptor extends HandlerInterceptorAdapter {
     	List<Privilege> privileges = privilegeService.findByRoleId(roleId);
     	for (Privilege p : privileges) {
     		// 匹配
-    			System.out.println(p.getPath()+"="+path);
+//    			System.out.println(p.getPath()+"="+path);
     			if(p.getPath().matches(path)){
     				return true;
               }

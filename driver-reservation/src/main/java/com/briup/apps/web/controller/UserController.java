@@ -42,7 +42,6 @@ public class UserController {
 	@ApiOperation(value = "登录")
 	@PostMapping("login")
 	public Message login(@RequestBody UserVM userVM) {
-		System.out.println(userVM.getPassword());
 		//1.验证用户身份
 		int roleId = userVM.getRoleId();
 		//每个角色中都要添加一个登陆模块

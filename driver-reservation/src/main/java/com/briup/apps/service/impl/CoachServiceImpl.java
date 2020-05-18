@@ -75,11 +75,10 @@ public class CoachServiceImpl implements ICoachService{
 
 	//修改教练信息
 	@Override
-	public void saveOrUpdate(int coachId,int age,int charges,String password,String carNum,String carType) {
+	public void saveOrUpdate(int coachId,int age,int charges,String carNum,String carType) {
 		Coach_Accept coach_Accept = coachAcceptMapper.selectByPrimaryKey(coachId);
 		coach_Accept.setAge(age);
 		coach_Accept.setCharges(charges);
-		coach_Accept.setPassword(password);
 		coachAcceptMapper.updateByPrimaryKey(coach_Accept);
 		
 		CarExample example = new CarExample();

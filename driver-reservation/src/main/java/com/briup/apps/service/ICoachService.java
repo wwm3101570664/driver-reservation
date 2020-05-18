@@ -10,7 +10,7 @@ import com.briup.apps.bean.extend.Coach_AcceptExtend;
 
 public interface ICoachService {
 	void insert(String name,int age,String gender,int charges,String password,String carNum,String carType);
-	void saveOrUpdate(int coachId,int age,int charges,String password,String carNum,String carType);
+	void saveOrUpdate(int coachId,int age,int charges,String carNum,String carType);
 	List<ArrangeTimeExtend> findAllArrangeByCoachId(int coachId);
 	List<User> findAllUsers(int coachId);
 	Coach_Accept findByCoachId(int coachId);

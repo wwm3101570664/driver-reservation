@@ -34,6 +34,15 @@ public class UsersController {
 	@Autowired
 	private IUserService userService;
 	
+	@ApiOperation(value = "学员注册")
+	//paramType=form适用于表单提交和post
+	@ApiImplicitParams({
+		//@ApiImplicitParam(name="id",value = "用户id",paramType = "query",required = true ,dataType = "int"),
+		@ApiImplicitParam(name="name",value = "姓名",paramType = "query",required = true,dataType = "string"),
+		@ApiImplicitParam(name="age",value = "年龄",paramType = "query",required = true,dataType = "int"),
+		@ApiImplicitParam(name="gender",value = "性别",paramType = "query",required = true,dataType = "string"),
+		@ApiImplicitParam(name="password",value = "密码",paramType = "query",required = true,dataType = "string"),
+	})
 	@PostMapping("register")
 	public Message register(String name,int age,String gender,String password) {
 		userService.insert(name, age, gender, password);
