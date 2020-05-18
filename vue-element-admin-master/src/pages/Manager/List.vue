@@ -123,7 +123,7 @@ export default {
     },
     methods:{
         reLoadData(){
-            request.get("/users/findAll")
+            request.get("/manager/findAllCoaches")
         .then(result=>{
             this.coachAccepts = result.data;
         })
@@ -201,7 +201,8 @@ export default {
                     this.$message({message:response.message,type:'success'});
                     this.reLoadData();
                 })
-        }
+        },
+        
         
     }
 }

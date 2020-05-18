@@ -2,7 +2,7 @@
     <div>
           <div class="btns">
               <el-button type="primary" size="small" @click="back">返回</el-button>
-              <el-button type="primary" size="small" @click="downLoad">下载</el-button>
+               <el-button type="primary" size="small" @click="toDownLoad">下载教学计划</el-button>
           </div>
         
     <el-table :data="Arrange" style="width: 100%" >
@@ -25,7 +25,7 @@ export default {
         }
         },
         created(){
-
+                this.reLoadData();
         },
         methods:{
             reLoadData(){
@@ -37,15 +37,12 @@ export default {
              back(){
             this.$router.go(-1);
             },
-            downLoad(){
-                request.get("/manager/download")
-                 .then(response=>{
-                        this.$message({
-                            message:response.message,
-                        })
-            })
-            }
-
+             toDownLoad(){
+                request.get("/manager/download") 
+                .then(response=>{
+                    this.$message({message:response.message,type:'success'});
+                });
+            },
         }
 }
 </script>

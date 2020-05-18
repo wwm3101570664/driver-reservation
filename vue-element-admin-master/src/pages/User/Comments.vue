@@ -55,10 +55,10 @@ export default {
         back(){
             this.$router.go(-1);
         },
-        toReview(id){
+        toReview(val){
             this.visible=true;
             let url="/users/findComment"
-            request.get(url+"?coachId="+id)
+            request.get(url+"?coachId="+val)
             .then(result=>{
                     this.comment = result.data;
             }) 

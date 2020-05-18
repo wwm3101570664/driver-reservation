@@ -6,7 +6,9 @@
              <el-button type="primary" size="small" @click="toFindUsers">查看学员</el-button>
              <el-button type="primary" size="small" @click="toFindArranges">查看教学安排</el-button>
               <el-button type="primary" size="small" @click="toDownLoad">下载教学计划</el-button>
+              
         </div>
+       
 
          <el-table :data="coachAccept" style="width: 100%" >
             <el-table-column prop="coachAccept.name" label="姓名" width="180"></el-table-column>
@@ -21,20 +23,17 @@
       <el-dialog title="修改教练信息" :visible.sync="visible">
       <el-form :model="form">
         <el-form-item label="年龄" label-width="80px">
-          <el-input v-model="form.age" autocomplete="off">form.coachAccept</el-input>
+          <el-input v-model="form.age" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="收费标准" label-width="80px">
           <el-input v-model="form.charges" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="车辆类型" label-width="80px">
-          <el-input v-model="form.carType" autocomplete="off"></el-input>
+          <el-input v-model="form.type" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="车牌号" label-width="80px">
-          <el-input v-model="form.carNum" autocomplete="off"></el-input>
+          <el-input v-model="form.carNumber" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="密码" label-width="80px">
-          <el-input v-model="form.password" autocomplete="off"></el-input>
-        </el-form-item>  
        </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="visible = false" size="small">取 消</el-button>
@@ -72,6 +71,7 @@
 <script>
 import request from "@/utils/request"
 import qs from 'querystring'
+import axios from 'axios'
 export default {
       data(){
         return{
@@ -92,7 +92,6 @@ export default {
                 request.get("/coach/findCoach")
                 .then(result=>{
                      this.coachAccept = result.data;
-                     this.form = this.coachAccept;
                 })
             },
             saveOrUpdate(){
@@ -101,7 +100,6 @@ export default {
                     .then(result=>{
                         this.form = result.data;
                     });
-                    console.log(this.form);
             },
             saveOrUpdate2(){
                     request.request({
@@ -133,11 +131,18 @@ export default {
                 })
             },
             toDownLoad(){
-                request.get("/coach/download")
+                request.get("/coach/download") 
+                .then(response=>{
+                    this.$message({message:response.message,type:'success'});
+                });
             },
             toPass(date,phoneNum){
               let url = "/coach/sendMessages";
-                request.get(url+"?dateTime="+date+"&phoneNum="+phoneNum);
+                request.get(url+"?dateTime="+date+"&phoneNum="+phoneNum)
+                 .then(response=>{
+                    this.$message({message:response.message,type:'success'});
+                });
+
             }
         }
     

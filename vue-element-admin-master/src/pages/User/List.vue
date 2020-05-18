@@ -153,19 +153,6 @@ export default {
         toCommets(){
           this.$router.push({path:"/User/Comments"})
         },
-        //  toReview() {
-        //       this.visible4=true;
-        //       let url = "/users/findMessages"
-        //       request.get(url,{params:{coachId:id}})
-        //       .then(result=>{
-        //                     this.comment = result.data;
-        //                 }) 
-        //       this.$message({
-        //         message: response.message.content,
-        //         center: true
-        //         });
-                    
-        //     },
             saveOrUpdate(){
                  request.request({
                     url:'/users/saveOrUpdate',
